@@ -112,8 +112,16 @@ function liveClient(): WpClient {
     async getEntryByPath(path: string): Promise<SparkEntry | null> {
       const slug = pathToSlug(path)
 
-      // Try a page by slug.
-      const pageData = await query<{ pageBy?: { __typename: string } | null }>(
+      // Try a landing page by slug — the component-built page type
+      // (hero, pricing, …) that backs the homepage and marketing pages.
+      const landingData = await query<{ landing?: SparkEntry | null }>(
+        `query($slug:ID!){ landing(id:$slug, idType:SLUG){ ${ENTRY_FIELDS} } }`,
+        { slug },
+      ).catch(() => null)
+      if (landingData?.landing) return landingData.landing
+
+      // Fall back to a built-in page by slug.
+      const pageData = await query<{ page?: { __typename: string } | null }>(
         `query($slug:ID!){ page(id:$slug, idType:URI){ ${ENTRY_FIELDS} } }`,
         { slug },
       ).catch(() => null)
