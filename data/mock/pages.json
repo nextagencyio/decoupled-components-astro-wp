@@ -1,0 +1,197 @@
+{
+  "pages": [
+    {
+      "id": "page-about",
+      "title": "About LaunchPad",
+      "path": "/about-launchpad",
+      "sections": [
+        {
+          "__typename": "ParagraphHero",
+          "id": "about-hero",
+          "eyebrow": "Our Story",
+          "title": "Building the Future of Web Development",
+          "subtitle": "We're a team of passionate developers, designers, and strategists helping businesses build faster, more flexible websites.",
+          "layout": "centered",
+          "backgroundColor": "gradient"
+        },
+        {
+          "__typename": "ParagraphStat",
+          "id": "about-stats",
+          "eyebrow": "Our Impact",
+          "title": "Trusted by Teams Worldwide",
+          "stats": [
+            {
+              "id": "stat-1",
+              "value": "500+",
+              "label": "Projects Delivered",
+              "description": "Successful launches"
+            },
+            {
+              "id": "stat-2",
+              "value": "50+",
+              "label": "Team Members",
+              "description": "Across 12 countries"
+            },
+            {
+              "id": "stat-3",
+              "value": "99%",
+              "label": "Client Satisfaction",
+              "description": "5-star reviews"
+            },
+            {
+              "id": "stat-4",
+              "value": "24/7",
+              "label": "Support",
+              "description": "Always available"
+            }
+          ]
+        },
+        {
+          "__typename": "ParagraphSidebyside",
+          "id": "about-mission",
+          "eyebrow": "Our Mission",
+          "title": "Empowering Digital Transformation",
+          "content": "We believe every business deserves a powerful, flexible web presence. Our decoupled architecture combines the best of headless CMS with modern frontend frameworks to deliver exceptional digital experiences.",
+          "imagePosition": "right",
+          "image": {
+            "url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80",
+            "alt": "Team collaboration"
+          },
+          "features": [
+            {
+              "id": "f1",
+              "icon": "Zap",
+              "title": "Lightning Fast",
+              "description": "Sub-second page loads"
+            },
+            {
+              "id": "f2",
+              "icon": "Shield",
+              "title": "Enterprise Secure",
+              "description": "SOC 2 compliant"
+            },
+            {
+              "id": "f3",
+              "icon": "Globe",
+              "title": "Global Scale",
+              "description": "Edge deployment worldwide"
+            }
+          ]
+        },
+        {
+          "__typename": "ParagraphCardGroup",
+          "id": "about-values",
+          "eyebrow": "Our Values",
+          "title": "What Drives Us",
+          "columns": "3",
+          "cards": [
+            {
+              "id": "v1",
+              "icon": "Heart",
+              "title": "Customer First",
+              "description": "Every decision starts with how it benefits our customers."
+            },
+            {
+              "id": "v2",
+              "icon": "Lightbulb",
+              "title": "Innovation",
+              "description": "We constantly push boundaries and embrace new technologies."
+            },
+            {
+              "id": "v3",
+              "icon": "Users",
+              "title": "Collaboration",
+              "description": "Great products are built by great teams working together."
+            }
+          ]
+        },
+        {
+          "__typename": "ParagraphNewsletter",
+          "id": "about-cta",
+          "title": "Ready to Transform Your Digital Presence?",
+          "subtitle": "Join thousands of teams building better websites with our platform.",
+          "buttonText": "Get Started Free",
+          "backgroundColor": "dark"
+        }
+      ]
+    },
+    {
+      "id": "page-features",
+      "title": "Services",
+      "path": "/services",
+      "sections": [
+        {
+          "__typename": "ParagraphHero",
+          "id": "features-hero",
+          "eyebrow": "Platform Features",
+          "title": "Everything You Need to Build Amazing Websites",
+          "subtitle": "From content management to deployment, we've got you covered with a complete suite of tools.",
+          "layout": "centered",
+          "primaryCtaText": "Start Building",
+          "primaryCtaUrl": "#",
+          "secondaryCtaText": "View Pricing",
+          "secondaryCtaUrl": "/pricing"
+        },
+        {
+          "__typename": "ParagraphCardGroup",
+          "id": "features-grid",
+          "eyebrow": "Core Features",
+          "title": "Built for Modern Development",
+          "columns": "3",
+          "cards": [
+            {
+              "id": "feat1",
+              "icon": "Layers",
+              "title": "Decoupled Architecture",
+              "description": "Separate your content from presentation for maximum flexibility."
+            },
+            {
+              "id": "feat2",
+              "icon": "Zap",
+              "title": "Edge Deployment",
+              "description": "Deploy globally with sub-50ms response times."
+            },
+            {
+              "id": "feat3",
+              "icon": "Code",
+              "title": "Developer Experience",
+              "description": "Modern tooling with TypeScript, React, and Next.js."
+            },
+            {
+              "id": "feat4",
+              "icon": "Lock",
+              "title": "Enterprise Security",
+              "description": "SOC 2 compliant with SSO and role-based access."
+            },
+            {
+              "id": "feat5",
+              "icon": "BarChart",
+              "title": "Analytics",
+              "description": "Built-in insights for content performance."
+            },
+            {
+              "id": "feat6",
+              "icon": "Puzzle",
+              "title": "Integrations",
+              "description": "Connect with 50+ tools and services."
+            }
+          ]
+        },
+        {
+          "__typename": "ParagraphSidebyside",
+          "id": "features-visual",
+          "eyebrow": "Visual Editing",
+          "title": "Edit Content Like Never Before",
+          "content": "Our intuitive visual editor lets content teams work independently while developers focus on building features. No more bottlenecks.",
+          "imagePosition": "right",
+          "image": {
+            "url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+            "alt": "Visual editing interface"
+          },
+          "ctaText": "Learn More",
+          "ctaUrl": "#"
+        }
+      ]
+    }
+  ]
+}
