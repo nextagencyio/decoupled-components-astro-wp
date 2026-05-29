@@ -46,6 +46,7 @@ export interface SparkEntry {
 const COMPONENT_FIELDS = `
   __typename
   kind
+  props
   html
   heading
   text
