@@ -11,8 +11,8 @@ const aiPlugin = import.meta.env.PUBLIC_PUCK_AI_PROVIDER === 'puck-cloud'
   ? puckCloudPlugin
   : groqPlugin
 
-const PUCK_API = '/api/drupal-puck'
-const DRUPAL_BASE_URL = import.meta.env.PUBLIC_DRUPAL_BASE_URL || 'http://localhost:8888'
+const PUCK_API = '/api/wp-puck'
+const WP_BASE_URL = import.meta.env.PUBLIC_WP_BASE_URL || 'https://decoupled-wp.ddev.site'
 
 const COLORS = [
   '#ef4444', '#f97316', '#eab308', '#22c55e',
@@ -116,7 +116,7 @@ export default function EditorIsland({ nid, token }: EditorIslandProps) {
           const authRes = await fetch('/api/auth/validate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token }),
+            body: JSON.stringify({ token, postId: nid }),
           })
           const authData = await authRes.json()
 
@@ -223,16 +223,16 @@ export default function EditorIsland({ nid, token }: EditorIslandProps) {
           <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#dc2626' }}>Unauthorized</h2>
           <p style={{ color: '#666', marginTop: '0.5rem', maxWidth: '400px' }}>{state.message}</p>
           <p style={{ color: '#9ca3af', marginTop: '0.5rem', fontSize: '0.875rem' }}>
-            Please access the editor from within Drupal using the Edit tab.
+            Please open the editor from WordPress using the Design Studio button.
           </p>
           <a
-            href={`${DRUPAL_BASE_URL}/node/${nid}`}
+            href={`${WP_BASE_URL}/wp/wp-admin/post.php?post=${nid}&action=edit`}
             style={{
               display: 'inline-block', marginTop: '1rem', padding: '0.5rem 1rem',
               background: '#2563eb', color: 'white', borderRadius: '0.375rem', textDecoration: 'none',
             }}
           >
-            Go to Drupal
+            Go to WordPress
           </a>
         </div>
       </div>
@@ -259,7 +259,7 @@ export default function EditorIsland({ nid, token }: EditorIslandProps) {
     )
   }
 
-  const drupalNodeUrl = `${DRUPAL_BASE_URL}/node/${nid}`
+  const drupalNodeUrl = `${WP_BASE_URL}/wp/wp-admin/post.php?post=${nid}&action=edit`
 
   const names = otherEditors.map(e => e.name).filter(Boolean)
   const nameList = names.length === 1

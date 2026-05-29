@@ -55,6 +55,11 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({
       success: true,
+      // spark-puck tokens are post-scoped, not user-scoped, so there's
+      // no real WP user identity to surface. Return a stable editor
+      // identity so the Puck island has the { user: { uid, name } } shape
+      // it shares with the Drupal flow.
+      user: { uid: 'wp-editor', name: 'WordPress Editor' },
       node: { nid: postId },
     }), { headers })
   } catch (error: any) {

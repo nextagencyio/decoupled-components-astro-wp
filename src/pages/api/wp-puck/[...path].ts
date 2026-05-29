@@ -22,20 +22,24 @@ async function handleRequest(request: Request, path: string, method: string) {
       Accept: 'application/json',
     }
 
+    // Both load (GET) and save (POST) hit spark-puck's can_edit gate,
+    // which accepts the per-post edit token. The token lives in the
+    // server-side session minted by /api/auth/validate; forward it on
+    // every request, not just writes.
+    cleanupSessions()
+    const session = getSessionFromRequest(request)
+    if (!session) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized. Please open the editor from WordPress.' }),
+        { status: 401 }
+      )
+    }
+    headers['X-Spark-Puck-Token'] = session.token
+
     let body: string | undefined
 
     if (method === 'POST') {
-      cleanupSessions()
-      const session = getSessionFromRequest(request)
-      if (!session) {
-        return new Response(
-          JSON.stringify({ error: 'Unauthorized. Please open the editor from WordPress.' }),
-          { status: 401 }
-        )
-      }
-
       headers['Content-Type'] = 'application/json'
-      headers['X-Spark-Puck-Token'] = session.token
       const rawBody = await request.json()
       body = JSON.stringify(rawBody)
     }
