@@ -21,29 +21,46 @@ with `decoupled-project`.
   `WP_GRAPHQL_URL`) instead of `DRUPAL_*`.
 - Removed the Drupal-only `jsonapi` proxy.
 
-## Remaining (the read layer)
+## Read layer — done
 
-The page render path still uses the Drupal-codegen'd typed client
-(`lib/drupal-client.ts` + `schema/client.ts`, generated from Drupal's
-GraphQL schema). To finish:
+- **`lib/wp-client.ts`** — hand-written WPGraphQL client (replaces the
+  Drupal codegen'd `schema/client`). `getEntryByPath(path)` resolves a
+  slug, queries `page(idType:URI)` then falls back to
+  `resource(idType:SLUG)`, returning a `SparkEntry` with shared fields
+  (`heroImage{src alt}`, `introParagraphs`, `metaDescription`,
+  `bodyHtml`, `components`). Public reads, no auth.
+- **`src/components/SparkComponents.astro`** — renders the component
+  list, dispatching on `component.kind` (richtext | cta | gallery |
+  embed) — the WP analogue of the Drupal `ParagraphRenderer` (which
+  dispatched on per-type `__typename`).
+- **`src/pages/index.astro` + `[...slug].astro`** — rewired to
+  `wp-client` + `SparkComponents`.
+- Removed the orphaned `lib/drupal-client.ts` + `lib/drupal-utils.ts`.
 
-1. **Regenerate `schema/`** against `decoupled-wp`'s WPGraphQL endpoint
-   (`<WP_BASE_URL>/graphql`), OR hand-write a thin `lib/wp-client.ts`
-   implementing the same small `TypedClient` surface the pages use:
-   `getEntryByPath(path)`, `getEntries(type)`, `getEntry(type,id)`,
-   `raw(query,vars)`.
-2. **Map the query shape** from Drupal nodes to the WP model: the WP
-   GraphQL exposes `pages`/`resources` with shared fields `bodyHtml`,
-   `heroImage { src alt }`, `introParagraphs`, `components { ... }`,
-   `metaDescription`. The page components in `src/components/` expect
-   the Drupal field names — align them to these.
-3. **Point `getClient()`** (`lib/drupal-client.ts`) at the WP client;
-   keep the demo-mode mock path.
+Verified: the site **builds clean** (`npm run build`), and the exact
+GraphQL queries the client issues were validated against the live
+`decoupled-wp` schema via wp-cli (`page(id:"home",idType:URI)` and
+`resource(id:"getting-started",idType:SLUG)` both return the expected
+shape). The HTTP hop itself wasn't exercised from the build sandbox
+(can't reach the DDEV HTTPS endpoint over the wire) — run `npm run dev`
+against a reachable `WP_BASE_URL` to see it live.
 
-This step needs a reachable WPGraphQL endpoint to codegen/verify
-against; it was deferred because the build sandbox can't reach the
-DDEV HTTPS endpoint over the wire (the spark-puck transform itself was
-verified directly in PHP via wp-cli, which does work).
+## Component-set reconciliation (next content-model decision)
+
+The original Drupal starter shipped a rich paragraph palette (Hero,
+CardGroup, Pricing, Stats, Accordion, Quote, LogoCollection,
+Newsletter, …) under `src/components/paragraphs/`. The WP model's
+component set is currently coarse (richtext / cta / gallery / embed).
+`SparkComponents.astro` renders the WP set; the richer Drupal paragraph
+components are still in the tree but unused.
+
+To reach full palette parity, either:
+1. **Expand the WP model's component set** (add hero/cards/pricing/etc.
+   to spark-core's components field + GraphQL) and extend
+   `SparkComponents.astro` to render them, or
+2. **Keep WP coarse** and delete the unused Drupal paragraph components.
+
+This is a content-model call, not a wiring task — tracked here.
 
 ## Verifying locally
 

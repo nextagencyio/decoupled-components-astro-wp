@@ -1,29 +1,25 @@
 ---
 import SiteLayout from '@/src/layouts/SiteLayout.astro'
-import ParagraphRenderer from '@/src/components/paragraphs/ParagraphRenderer.astro'
-import { getClient } from '@/lib/drupal-client'
-import { transformSections } from '@/lib/drupal-utils'
-import type { NodeLandingPage } from '@/schema/client'
+import SparkComponents from '@/src/components/SparkComponents.astro'
+import { getClient } from '@/lib/wp-client'
 
 const { slug } = Astro.params
 const path = `/${slug}`
 
 const client = getClient()
 
-let page: NodeLandingPage | null = null
+let entry = null
 try {
-  page = await client.getEntryByPath(path) as NodeLandingPage | null
+  entry = await client.getEntryByPath(path)
 } catch {
-  // Page not found
+  // not found
 }
 
-if (!page?.sections) {
+if (!entry) {
   return Astro.redirect('/404')
 }
-
-const sections = transformSections(page.sections)
 ---
 
-<SiteLayout title={page.title}>
-  <ParagraphRenderer sections={sections} />
+<SiteLayout title={entry.title}>
+  <SparkComponents components={entry.components ?? []} />
 </SiteLayout>

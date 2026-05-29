@@ -1,0 +1,80 @@
+---
+/**
+ * Renders the WP model's component list. Every component is a
+ * SparkComponent discriminated by `kind` (richtext | cta | gallery |
+ * embed) — the contract WPGraphQL exposes from spark-core. This is the
+ * WP analogue of ParagraphRenderer (which dispatches on per-type
+ * __typename for the richer Drupal paragraph set).
+ *
+ * The WP component set is intentionally coarse (prose lives in the
+ * editor body / richtext, not one row per paragraph). Expanding it to
+ * match the full Drupal paragraph palette (hero, cards, pricing, …) is
+ * a content-model decision tracked in docs/WP-PORT-STATUS.md.
+ */
+import type { SparkComponent } from '@/lib/wp-client'
+
+interface Props {
+  components: SparkComponent[]
+}
+
+const { components = [] } = Astro.props
+---
+
+{components.map((c) => {
+  switch (c.kind) {
+    case 'richtext':
+      return (
+        <section class="section-padding bg-white">
+          <div class="container-wide">
+            <div class="prose prose-lg max-w-none" set:html={c.html ?? ''} />
+          </div>
+        </section>
+      )
+
+    case 'cta':
+      return (
+        <section class="section-padding bg-gray-50">
+          <div class="container-wide text-center">
+            {c.heading && (
+              <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{c.heading}</h2>
+            )}
+            {c.text && <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">{c.text}</p>}
+            {c.buttonUrl && c.buttonLabel && (
+              <a
+                href={c.buttonUrl}
+                class="inline-flex items-center justify-center px-6 py-3 rounded-md bg-blue-600 text-white font-semibold no-underline hover:bg-blue-700"
+              >
+                {c.buttonLabel}
+              </a>
+            )}
+          </div>
+        </section>
+      )
+
+    case 'gallery':
+      return (
+        <section class="section-padding bg-white">
+          <div class="container-wide">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {(c.images ?? []).map((img) => (
+                <img src={img.src} alt={img.alt} loading="lazy" class="w-full h-auto rounded-lg" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+
+    case 'embed':
+      return (
+        <section class="section-padding bg-white">
+          <div class="container-wide">
+            <div class="aspect-video" set:html={c.html ?? ''} />
+          </div>
+        </section>
+      )
+
+    default:
+      console.warn('Unknown component kind:', c.kind)
+      return null
+  }
+})}

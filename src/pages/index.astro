@@ -1,32 +1,22 @@
 ---
 import SiteLayout from '@/src/layouts/SiteLayout.astro'
-import ParagraphRenderer from '@/src/components/paragraphs/ParagraphRenderer.astro'
+import SparkComponents from '@/src/components/SparkComponents.astro'
 import SetupGuide from '@/src/components/SetupGuide.astro'
-import { getClient } from '@/lib/drupal-client'
-import { transformSections } from '@/lib/drupal-utils'
-import type { NodeLandingPage } from '@/schema/client'
+import { getClient } from '@/lib/wp-client'
 
-let sections = null
+let entry = null
 let showSetup = false
 
-if (!import.meta.env.DRUPAL_BASE_URL && import.meta.env.PUBLIC_DEMO_MODE === 'false') {
+if (!import.meta.env.WP_BASE_URL && import.meta.env.PUBLIC_DEMO_MODE === 'false') {
   showSetup = true
 } else {
   const client = getClient()
-
-  for (const path of ['/', '/node/1']) {
-    try {
-      const page = await client.getEntryByPath(path) as NodeLandingPage | null
-      if (page?.sections) {
-        sections = transformSections(page.sections)
-        break
-      }
-    } catch (error) {
-      console.error(`Error fetching homepage at ${path}:`, error)
-    }
+  try {
+    entry = await client.getEntryByPath('/')
+  } catch (error) {
+    console.error('Error fetching homepage:', error)
   }
-
-  if (!sections) {
+  if (!entry) {
     showSetup = true
   }
 }
@@ -35,7 +25,7 @@ if (!import.meta.env.DRUPAL_BASE_URL && import.meta.env.PUBLIC_DEMO_MODE === 'fa
 <SiteLayout>
   {showSetup ? (
     <SetupGuide />
-  ) : sections ? (
-    <ParagraphRenderer sections={sections} />
+  ) : entry ? (
+    <SparkComponents components={entry.components ?? []} />
   ) : null}
 </SiteLayout>
