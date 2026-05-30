@@ -2,13 +2,13 @@
 /**
  * Renders the WP component palette by delegating each component to the
  * existing Paragraph* renderers (forked from the Drupal starter — they
- * already render these exact prop shapes). spark-core exposes each
+ * already render these exact prop shapes). dc-core exposes each
  * component as { kind, props } where props is a JSON string; we parse
  * it, dispatch on kind, and spread the props into the matching
  * component.
  *
- * The prop names already align (spark-core's normalizer camelCases to
- * match lib/types.ts). The one adaptation: spark-core gives image
+ * The prop names already align (dc-core's normalizer camelCases to
+ * match lib/types.ts). The one adaptation: dc-core gives image
  * fields as plain URL strings, while the Paragraph* components expect
  * { url } objects — we wrap those here so the renderers are untouched.
  */
@@ -23,10 +23,10 @@ import ParagraphStats from './paragraphs/ParagraphStats.astro'
 import ParagraphNewsletter from './paragraphs/ParagraphNewsletter.astro'
 import ParagraphText from './paragraphs/ParagraphText.astro'
 
-import type { SparkComponent } from '@/lib/wp-client'
+import type { DcComponent } from '@/lib/wp-client'
 
 interface Props {
-  components: SparkComponent[]
+  components: DcComponent[]
 }
 
 const { components = [] } = Astro.props
@@ -55,7 +55,7 @@ function img(v: unknown): { url: string } | undefined {
 }
 
 // Per-kind prop adaptation: parse props JSON + wrap image fields.
-function adapt(c: SparkComponent): Record<string, any> {
+function adapt(c: DcComponent): Record<string, any> {
   let props: Record<string, any> = {}
   try {
     props = c.props ? JSON.parse(c.props) : {}

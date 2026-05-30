@@ -3,10 +3,10 @@
  *
  * Hand-written (vs. the Drupal codegen'd schema/client) because the WP
  * GraphQL surface the frontend needs is small and stable: fetch a page
- * or resource by slug, with its shared Spark fields + components. Public
- * reads need no auth (the spark-core model exposes content to anon).
+ * or resource by slug, with its shared Decoupled fields + components. Public
+ * reads need no auth (the dc-core model exposes content to anon).
  *
- * The component contract: every component is a `SparkComponent`
+ * The component contract: every component is a `DcComponent`
  * discriminated by `kind` (richtext | cta | gallery | embed), with all
  * possible props as nullable fields. The renderer dispatches on `kind`.
  */
@@ -14,32 +14,32 @@
 import { isDemoMode } from './demo-mode'
 import { createMockClient } from './mock-client'
 
-export interface SparkImage {
+export interface DcImage {
   src: string
   alt: string
 }
 
-export interface SparkComponent {
-  __typename: 'SparkComponent'
+export interface DcComponent {
+  __typename: 'DcComponent'
   kind: string
   html?: string | null
   heading?: string | null
   text?: string | null
   buttonLabel?: string | null
   buttonUrl?: string | null
-  images?: SparkImage[] | null
+  images?: DcImage[] | null
 }
 
-export interface SparkEntry {
+export interface DcEntry {
   __typename: string
   databaseId: number
   title: string
   slug: string
   uri?: string | null
-  heroImage?: SparkImage | null
+  heroImage?: DcImage | null
   introParagraphs?: string[] | null
   metaDescription?: string | null
-  components?: SparkComponent[] | null
+  components?: DcComponent[] | null
   bodyHtml?: string | null
 }
 
@@ -103,18 +103,18 @@ function pathToSlug(path: string): string {
 }
 
 export interface WpClient {
-  getEntryByPath(path: string): Promise<SparkEntry | null>
+  getEntryByPath(path: string): Promise<DcEntry | null>
   raw<T = any>(q: string, variables?: Record<string, unknown>): Promise<T>
 }
 
 function liveClient(): WpClient {
   return {
-    async getEntryByPath(path: string): Promise<SparkEntry | null> {
+    async getEntryByPath(path: string): Promise<DcEntry | null> {
       const slug = pathToSlug(path)
 
       // Try a landing page by slug — the component-built page type
       // (hero, pricing, …) that backs the homepage and marketing pages.
-      const landingData = await query<{ landing?: SparkEntry | null }>(
+      const landingData = await query<{ landing?: DcEntry | null }>(
         `query($slug:ID!){ landing(id:$slug, idType:SLUG){ ${ENTRY_FIELDS} } }`,
         { slug },
       ).catch(() => null)
@@ -125,11 +125,11 @@ function liveClient(): WpClient {
         `query($slug:ID!){ page(id:$slug, idType:URI){ ${ENTRY_FIELDS} } }`,
         { slug },
       ).catch(() => null)
-      if (pageData?.page) return pageData.page as unknown as SparkEntry
+      if (pageData?.page) return pageData.page as unknown as DcEntry
 
       // Fall back to a resource by slug. (CPTs use idType:SLUG;
       // the built-in page type uses idType:URI above.)
-      const resData = await query<{ resource?: SparkEntry | null }>(
+      const resData = await query<{ resource?: DcEntry | null }>(
         `query($slug:ID!){ resource(id:$slug, idType:SLUG){ ${ENTRY_FIELDS} } }`,
         { slug },
       ).catch(() => null)

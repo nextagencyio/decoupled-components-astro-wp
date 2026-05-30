@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 
 // WPGraphQL proxy. Unlike Drupal (OAuth client-credentials), WPGraphQL
-// serves public read queries with no auth — the spark-core model
+// serves public read queries with no auth — the dc-core model
 // exposes content types to the anonymous role. Authenticated mutations
 // (if ever needed) would add a JWT via wp-graphql-jwt-authentication;
 // the read path the frontend uses needs none.

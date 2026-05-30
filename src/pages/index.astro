@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '@/src/layouts/SiteLayout.astro'
-import SparkComponents from '@/src/components/SparkComponents.astro'
+import DcComponents from '@/src/components/DcComponents.astro'
 import SetupGuide from '@/src/components/SetupGuide.astro'
 import { getClient } from '@/lib/wp-client'
 
@@ -26,6 +26,6 @@ if (!import.meta.env.WP_BASE_URL && import.meta.env.PUBLIC_DEMO_MODE === 'false'
   {showSetup ? (
     <SetupGuide />
   ) : entry ? (
-    <SparkComponents components={entry.components ?? []} />
+    <DcComponents components={entry.components ?? []} />
   ) : null}
 </SiteLayout>
