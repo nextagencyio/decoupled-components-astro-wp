@@ -1,12 +1,12 @@
 import type { APIRoute } from 'astro'
 import { getSessionFromRequest, cleanupSessions } from '@/lib/puck-auth'
 
-// Proxy to the spark-puck REST contract on decoupled-wp:
-//   GET  /wp-json/spark-puck/v1/load/{id}
-//   POST /wp-json/spark-puck/v1/save/{id}
-//   GET  /wp-json/spark-puck/v1/mapping
+// Proxy to the dc-puck REST contract on decoupled-wp:
+//   GET  /wp-json/dc/v1/load/{id}
+//   POST /wp-json/dc/v1/save/{id}
+//   GET  /wp-json/dc/v1/mapping
 // The frontend never holds WP credentials — it forwards the per-post
-// edit token (minted by spark-puck/v1/token/{id}) in the header the
+// edit token (minted by dc-puck/v1/token/{id}) in the header the
 // plugin reads.
 const WP_URL = import.meta.env.WP_BASE_URL
 
@@ -16,13 +16,13 @@ async function handleRequest(request: Request, path: string, method: string) {
       return new Response(JSON.stringify({ error: 'WP_BASE_URL not configured' }), { status: 500 })
     }
 
-    const wpUrl = `${WP_URL}/wp-json/spark-puck/v1/${path}`
+    const wpUrl = `${WP_URL}/wp-json/dc/v1/${path}`
 
     const headers: Record<string, string> = {
       Accept: 'application/json',
     }
 
-    // Both load (GET) and save (POST) hit spark-puck's can_edit gate,
+    // Both load (GET) and save (POST) hit dc-puck's can_edit gate,
     // which accepts the per-post edit token. The token lives in the
     // server-side session minted by /api/auth/validate; forward it on
     // every request, not just writes.

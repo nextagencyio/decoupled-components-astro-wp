@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import { createSession, COOKIE_NAME, cleanupSessions } from '@/lib/puck-auth'
 
-// Validate a per-post edit token against spark-puck on decoupled-wp.
+// Validate a per-post edit token against dc-puck on decoupled-wp.
 // The WP plugin's contract is { postId, token } -> { valid: bool }
 // (leaner than Drupal's, which echoed user/node). The editor is opened
 // from wp-admin with ?postId=&token= in the URL, so we already know the
@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: 'Missing token or postId' }), { status: 400 })
     }
 
-    const res = await fetch(`${WP_URL}/wp-json/spark-puck/v1/validate-token`, {
+    const res = await fetch(`${WP_URL}/wp-json/dc/v1/validate-token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, postId }),
@@ -39,7 +39,7 @@ export const POST: APIRoute = async ({ request }) => {
     // Create a server-side session scoped to this post.
     cleanupSessions()
     const sessionId = createSession(
-      'wp-editor', // spark-puck token is post-scoped, not user-scoped
+      'wp-editor', // dc-puck token is post-scoped, not user-scoped
       'WordPress Editor',
       String(postId),
       token
@@ -55,7 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response(JSON.stringify({
       success: true,
-      // spark-puck tokens are post-scoped, not user-scoped, so there's
+      // dc-puck tokens are post-scoped, not user-scoped, so there's
       // no real WP user identity to surface. Return a stable editor
       // identity so the Puck island has the { user: { uid, name } } shape
       // it shares with the Drupal flow.
