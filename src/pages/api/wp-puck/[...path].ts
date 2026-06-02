@@ -34,7 +34,7 @@ async function handleRequest(request: Request, path: string, method: string) {
         { status: 401 }
       )
     }
-    headers['X-Spark-Puck-Token'] = session.token
+    headers['X-Dc-Puck-Token'] = session.token
 
     let body: string | undefined
 
